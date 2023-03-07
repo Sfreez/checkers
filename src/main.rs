@@ -3,9 +3,9 @@ use regex::Regex;
 const BOARD_WITH_PLACEHOLDERS: &str = "
         1       2       3       4       5   
   -----------------------------------------
-  |   |*01|   |*02|   |   |   |   |   |   | 5
+  |   |*01|   |*02|   |*03|   |*04|   |*05| 5
   -----------------------------------------
-6 |   |   |   |   |   |   |   |   |   |   |
+6 |*06|   |*07|   |*08|   |*09|   |   |   |
   -----------------------------------------
   |   |   |   |   |   |   |   |   |   |*15|15
   -----------------------------------------
@@ -13,11 +13,11 @@ const BOARD_WITH_PLACEHOLDERS: &str = "
   -----------------------------------------
   |   |   |   |   |   |   |   |   |   |   |25
   -----------------------------------------
-26|   |   |   |   |   |   |   |   |   |   |
+26|*26|   |   |   |   |   |   |   |   |   |
   -----------------------------------------
   |   |   |   |   |   |   |   |   |   |   |35
   -----------------------------------------
-36|   |   |   |   |   |   |   |   |   |   |
+36|*36|   |   |   |   |   |   |   |   |   |
   -----------------------------------------
   |   |   |   |   |   |   |   |   |   |   |45
   -----------------------------------------
@@ -26,14 +26,31 @@ const BOARD_WITH_PLACEHOLDERS: &str = "
     46      47      48      49      50";
 
 fn main() {
-    print_board();
-
-    let regex = Regex::new(r"(\*)(\d{2})").unwrap();
-    for captures in regex.captures_iter(BOARD_WITH_PLACEHOLDERS) {
-        println!("{}", &captures[2].trim_start_matches('0'));
+    let mut board = ["";50];
+    for (i, el) in board.iter_mut().enumerate() {
+      if i < 20 {
+        *el = "B";
+      } else if i >= 30 {
+        *el = "W";
+      }
     }
+    print_board();
 }
 
 fn print_board() {
-    println!("{}", BOARD_WITH_PLACEHOLDERS);
+  let mut board = ["  ";50];
+  for (i, el) in board.iter_mut().enumerate() {
+    if i < 20 {
+      *el = " B ";
+    } else if i >= 30 {
+      *el = " W ";
+    }
+  }
+    let mut board_str = String::from(BOARD_WITH_PLACEHOLDERS);
+    let regex = Regex::new(r"(\*)(\d{2})").unwrap();
+    for captures in regex.captures_iter(BOARD_WITH_PLACEHOLDERS) {
+        let index = captures[2].trim_start_matches('0').parse::<usize>().unwrap();
+        board_str = board_str.replace(&captures[0], board.get(index).unwrap());
+    }
+    println!("{}", board_str);
 }
