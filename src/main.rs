@@ -25,24 +25,47 @@ const BOARD_WITH_PLACEHOLDERS: &str = "
   -----------------------------------------
     46      47      48      49      50";
 
-fn main() {
-    print_board();
+#[derive(Clone,Copy)]
+enum CaseValue {
+    EMPTY,
+    BLACK,
+    WHITE
 }
 
-fn print_board() {
-  let mut board = ["   ";50];
-  for (i, el) in board.iter_mut().enumerate() {
-    if i < 20 {
-      *el = " B ";
-    } else if i >= 30 {
-      *el = " W ";
+fn main() {
+    let board = initialize_board();
+    print_board(board);
+}
+
+fn initialize_board() -> [CaseValue; 50] {
+    let mut board: [CaseValue;50] = [CaseValue::EMPTY; 50];
+    for (index, case_value) in board.iter_mut().enumerate() {
+        if index < 20 {
+            *case_value = CaseValue::BLACK;
+        } else if index >= 30 {
+            *case_value = CaseValue::WHITE;
+        } else {
+          *case_value = CaseValue::EMPTY;
+        }
     }
-  }
+    board
+}
+
+fn print_board(board: [CaseValue;50]) {
     let mut board_str = String::from(BOARD_WITH_PLACEHOLDERS);
     let regex = Regex::new(r"(\*)(\d{2})").unwrap();
     for captures in regex.captures_iter(BOARD_WITH_PLACEHOLDERS) {
-        let index = captures[2].trim_start_matches('0').parse::<usize>().unwrap() - 1;
-        board_str = board_str.replace(&captures[0], board.get(index).unwrap());
+        let index = captures[2]
+            .trim_start_matches('0')
+            .parse::<usize>()
+            .unwrap()
+            - 1;
+        match board.get(index).unwrap() {
+            CaseValue::BLACK => board_str = board_str.replace(&captures[0], " B "),
+            CaseValue::WHITE => board_str = board_str.replace(&captures[0], " W "),
+            CaseValue::EMPTY => board_str = board_str.replace(&captures[0], "   "),
+        }
+        
     }
     println!("{}", board_str);
 }
