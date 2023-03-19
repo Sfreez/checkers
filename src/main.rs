@@ -1,6 +1,8 @@
 use regex::Regex;
 use std::io;
 
+pub mod checkers;
+
 const BOARD_WITH_PLACEHOLDERS: &str = "
         1       2       3       4       5   
   -----------------------------------------
@@ -39,9 +41,11 @@ fn main() {
     println!("Whites to play :");
     let mut whites_move = String::new();
     match io::stdin().read_line(&mut whites_move) {
-        Ok(n) => {
-            println!("{n} bytes read");
-            println!("{whites_move}");
+        Ok(_) => {
+            match checkers::validate_whites_move_format(whites_move) {
+                Ok(_) => (),
+                Err(_) => println!("Invalid move format.")
+            }
         }
         Err(error) => println!("error: {error}"),
     }
