@@ -1,4 +1,5 @@
 use regex::Regex;
+use std::io;
 
 const BOARD_WITH_PLACEHOLDERS: &str = "
         1       2       3       4       5   
@@ -25,33 +26,42 @@ const BOARD_WITH_PLACEHOLDERS: &str = "
   -----------------------------------------
     46      47      48      49      50";
 
-#[derive(Clone,Copy)]
+#[derive(Clone, Copy)]
 enum CaseValue {
     EMPTY,
     BLACK,
-    WHITE
+    WHITE,
 }
 
 fn main() {
     let board = initialize_board();
     print_board(board);
+    println!("Whites to play :");
+    let mut whites_move = String::new();
+    match io::stdin().read_line(&mut whites_move) {
+        Ok(n) => {
+            println!("{n} bytes read");
+            println!("{whites_move}");
+        }
+        Err(error) => println!("error: {error}"),
+    }
 }
 
 fn initialize_board() -> [CaseValue; 50] {
-    let mut board: [CaseValue;50] = [CaseValue::EMPTY; 50];
+    let mut board: [CaseValue; 50] = [CaseValue::EMPTY; 50];
     for (index, case_value) in board.iter_mut().enumerate() {
         if index < 20 {
             *case_value = CaseValue::BLACK;
         } else if index >= 30 {
             *case_value = CaseValue::WHITE;
         } else {
-          *case_value = CaseValue::EMPTY;
+            *case_value = CaseValue::EMPTY;
         }
     }
     board
 }
 
-fn print_board(board: [CaseValue;50]) {
+fn print_board(board: [CaseValue; 50]) {
     let mut board_str = String::from(BOARD_WITH_PLACEHOLDERS);
     let regex = Regex::new(r"(\*)(\d{2})").unwrap();
     for captures in regex.captures_iter(BOARD_WITH_PLACEHOLDERS) {
@@ -65,7 +75,6 @@ fn print_board(board: [CaseValue;50]) {
             CaseValue::WHITE => board_str = board_str.replace(&captures[0], " W "),
             CaseValue::EMPTY => board_str = board_str.replace(&captures[0], "   "),
         }
-        
     }
     println!("{}", board_str);
 }
