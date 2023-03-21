@@ -42,8 +42,9 @@ fn main() {
     let mut whites_move = String::new();
     match io::stdin().read_line(&mut whites_move) {
         Ok(_) => {
+            whites_move = whites_move.trim().to_string();
             match checkers::validate_whites_move_format(whites_move) {
-                Ok(_) => (),
+                Ok(()) => (),
                 Err(_) => println!("Invalid move format.")
             }
         }
