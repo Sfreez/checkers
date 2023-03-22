@@ -1,12 +1,32 @@
 use regex::Regex;
 
-pub fn validate_whites_move_format(whites_move: String) -> Result<(), ()> {
-    let regex = Regex::new(r"^\d{1,2}-\d{1,2}$|^\d{1,2}(x\d{1,2}){1,}$").unwrap();
-    match regex.is_match(&whites_move) {
-        true => return Ok(()),
-        false => Err(()),
+pub struct WhitesMove {
+    captures: bool,
+    moves: Vec<u8>
+}
+
+impl WhitesMove {
+
+    fn new(captures: bool, moves: Vec<u8>) -> WhitesMove {
+        WhitesMove {captures, moves}
     }
-    // TODO : fix
+
+    pub fn from(whites_move: &str) -> Result<WhitesMove, ()> {
+        let move_regex = Regex::new(r"^\d{1,2}-\d{1,2}$").unwrap();
+        let captures_regex = Regex::new(r"^\d{1,2}(x\d{1,2}){1,}$").unwrap();
+        if move_regex.is_match(&whites_move) {
+            return Ok(WhitesMove::new(
+                false,
+                whites_move.split("-").map(str::parse::<u8>).collect::<Result<Vec<u8>, _>>().unwrap()))
+        } else if captures_regex.is_match(&whites_move) {
+            
+            return Ok(WhitesMove::new(
+                true,
+                whites_move.split("x").map(str::parse::<u8>).collect::<Result<Vec<u8>, _>>().unwrap()))
+        } else {
+            return Err(())
+        }
+    }
 }
 
 #[cfg(test)]
@@ -14,9 +34,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn valide_white_move() {
-        let whites_move = String::from("12x7");
-
-        assert!(validate_whites_move_format(whites_move).is_ok());
+    fn valid_white_move() {
+        assert!(WhitesMove::from("12x7").is_ok());
     }
 }
