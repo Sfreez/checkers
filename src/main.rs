@@ -2,6 +2,7 @@ use regex::Regex;
 use std::io;
 
 pub mod checkers;
+pub mod checkers_move;
 
 const BOARD_WITH_PLACEHOLDERS: &str = "
         1       2       3       4       5   
@@ -39,11 +40,12 @@ fn main() {
     let board = initialize_board();
     print_board(board);
     println!("Whites to play :");
-    let mut whites_move = String::new();
-    match io::stdin().read_line(&mut whites_move) {
+    let mut player_input = String::new();
+    
+    match io::stdin().read_line(&mut player_input) {
         Ok(_) => {
-            whites_move = whites_move.trim().to_string();
-            match checkers::WhitesMove::from(&whites_move) {
+            player_input = player_input.trim().to_string();
+            match checkers::WhitesMove::from(&player_input) {
                 Ok(_) => (),
                 Err(_) => println!("Invalid move format.")
             }
