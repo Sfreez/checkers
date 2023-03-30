@@ -1,26 +1,24 @@
 fn main() {
     const BOARD_LENGTH: usize = 10;
-    const PIECES_NUMBER: usize = 20;
+    const TROOPS_SIZE: usize = 20;
 
     assert!(BOARD_LENGTH % 2 == 0);
-    assert!(PIECES_NUMBER <= BOARD_LENGTH * BOARD_LENGTH / 4);
-    assert!(PIECES_NUMBER % (BOARD_LENGTH / 2) == 0);
+    assert!(TROOPS_SIZE <= BOARD_LENGTH * BOARD_LENGTH / 4);
+    assert!(TROOPS_SIZE % (BOARD_LENGTH / 2) == 0);
 
-    let mut board = [" "; BOARD_LENGTH*BOARD_LENGTH/2];
-    for index in 0..BOARD_LENGTH*BOARD_LENGTH/2 {
-        if index < PIECES_NUMBER {
-            board[index] = "W"
-        } else if index >= BOARD_LENGTH*BOARD_LENGTH/2 - PIECES_NUMBER {
-            board[index] = "B"
-        }
-    }
+    let board = initialize_board(BOARD_LENGTH, TROOPS_SIZE);
 
-    let line_separator = "-".repeat(BOARD_LENGTH * 4 + 1);
-    for line in 0..BOARD_LENGTH {
+    print_board(board, BOARD_LENGTH);
+}
+
+fn print_board(board: Vec<&str>, board_length: usize) {
+
+    let line_separator = "-".repeat(board_length * 4 + 1);
+    for line in 0..board_length {
         println!("{}", line_separator);
-        for column in 0..BOARD_LENGTH {
+        for column in 0..board_length {
             if (line + column) % 2 == 1 {
-                print!("| {} ", board[(line * BOARD_LENGTH + column) / 2]);
+                print!("| {} ", board[(line * board_length + column) / 2]);
             } else {
                 print!("|   ");
             }
@@ -28,4 +26,16 @@ fn main() {
         println!("|");
     }
     println!("{}", line_separator);
+}
+
+fn initialize_board(board_length: usize, troops_size: usize) -> Vec<&'static str> {
+    let mut board = vec![" "; board_length*board_length/2];
+    for index in 0..board_length*board_length/2 {
+        if index < troops_size {
+            board[index] = "W"
+        } else if index >= board_length*board_length/2 - troops_size {
+            board[index] = "B"
+        }
+    }
+    board
 }
